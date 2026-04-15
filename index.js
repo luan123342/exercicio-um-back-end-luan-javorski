@@ -2,92 +2,59 @@
 const fs = require('fs');
 const path = require('path');
 
-const caminho = path.join(__dirname, 'dados', 'produtos.json');
+const caminho = path.join(__dirname, 'filmes.json');
 
-function lerDados() {
-  const dados = fs.readFileSync(caminho, 'utf-8');
-  return JSON.parse(dados);
+let catalogoFilmes = [
+    { id: 1, titulo: "Matrix", ano: 1999, diretor: "Lana Wachowski", genero: "Ficção", nota: 4.8 },
+    { id: 2, titulo: "Titanic", ano: 1997, diretor: "James Cameron", genero: "Romance", nota: 4.5 },
+    { id: 3, titulo: "Toy Story", ano: 1995, diretor: "John Lasseter", genero: "Animação", nota: 4.7 },
+    { id: 4, titulo: "O Poderoso Chefão", ano: 1972, diretor: "Francis Ford Coppola", genero: "Drama", nota: 4.9 },
+    { id: 5, titulo: "Star Wars", ano: 1977, diretor: "George Lucas", genero: "Ficção", nota: 4.6 }
+];
+
+// Converter para JSON
+const jsonString = JSON.stringify(catalogoFilmes, null, 2);
+console.log("JSON formatado:");
+console.log(jsonString);
+console.log("Tipo:", typeof jsonString);
+
+// Simular API
+const novosFilmesJSON = JSON.stringify([
+    { id: 6, titulo: "Avatar", ano: 2009, diretor: "James Cameron", genero: "Ficção", nota: 4.4 },
+    { id: 7, titulo: "Vingadores", ano: 2012, diretor: "Joss Whedon", genero: "Ação", nota: 4.3 },
+    { id: 8, titulo: "Shrek", ano: 2001, diretor: "Andrew Adamson", genero: "Animação", nota: 4.6 }
+]);
+
+const novosFilmes = JSON.parse(novosFilmesJSON);
+catalogoFilmes = catalogoFilmes.concat(novosFilmes);
+
+// Buscar por ID
+function buscarFilmePorId(id) {
+    return catalogoFilmes.find(f => f.id === id) || null;
 }
 
-function salvarDados(dados) {
-  fs.writeFileSync(caminho, JSON.stringify(dados, null, 2));
+console.log("Buscar ID 2:", buscarFilmePorId(2));
+console.log("Buscar ID 99:", buscarFilmePorId(99));
+
+// Buscar por gênero
+function buscarPorGenero(genero) {
+    return catalogoFilmes.filter(f => f.genero === genero);
 }
 
-function listarProdutos() {
-  const produtos = lerDados();
-  console.table(produtos);
+console.log("Filmes de Ficção:", buscarPorGenero("Ficção"));
 
-  const total = produtos.reduce((soma, p) => soma + (p.preco * p.estoque), 0);
-  console.log("Valor total em estoque: R$", total);
-}
+// Salvar em arquivo
+fs.writeFileSync(caminho, JSON.stringify(catalogoFilmes, null, 2));
 
-function adicionarProduto(nome, preco, estoque) {
-  const produtos = lerDados();
-  const novoId = produtos.length > 0 ? Math.max(...produtos.map(p => p.id)) + 1 : 1;
+// Ler novamente
+const dadosLidos = JSON.parse(fs.readFileSync(caminho, 'utf-8'));
+console.log("Dados lidos do arquivo:", dadosLidos);
 
-  const novoProduto = { id: novoId, nome, preco, estoque };
-  produtos.push(novoProduto);
+// Criar fichas
+const fichas = catalogoFilmes.map(f => 
+`${f.titulo} (${f.ano}) - Dirigido por ${f.diretor}
+Gênero: ${f.genero} | Nota: ${f.nota}/5.0`
+);
 
-  salvarDados(produtos);
-  console.log("Produto adicionado com sucesso!");
-}
-
-function buscarProduto(id) {
-  const produtos = lerDados();
-  const produto = produtos.find(p => p.id === id);
-
-  if (produto) {
-    console.log(produto);
-  } else {
-    console.log("Produto não encontrado!");
-  }
-}
-
-function atualizarEstoque(id, quantidade) {
-  const produtos = lerDados();
-  const produto = produtos.find(p => p.id === id);
-
-  if (!produto) {
-    console.log("Produto não encontrado!");
-    return;
-  }
-
-  console.log("Antes:", produto.estoque);
-  produto.estoque = quantidade;
-  console.log("Depois:", produto.estoque);
-
-  salvarDados(produtos);
-}
-
-function removerProduto(id) {
-  let produtos = lerDados();
-  const novoArray = produtos.filter(p => p.id !== id);
-
-  if (produtos.length === novoArray.length) {
-    console.log("Produto não encontrado!");
-    return;
-  }
-
-  salvarDados(novoArray);
-  console.log("Produto removido com sucesso!");
-}
-
-function produtosEmFalta(limite) {
-  const produtos = lerDados();
-  const faltando = produtos.filter(p => p.estoque < limite);
-
-  if (faltando.length === 0) {
-    console.log("Nenhum produto em falta.");
-  } else {
-    console.table(faltando);
-    console.log("Sugestão: fazer novo pedido!");
-  }
-}
-
-// Exemplo de uso:
-listarProdutos();
-// adicionarProduto("Monitor", 900, 5);
-// buscarProduto(1);
-// atualizarEstoque(2, 20);
-// removerProduto(3);
-// produtosEmFalta(15);
+console.log("Fichas dos filmes:");
+fichas.forEach(f => console.log("\n" + f));
