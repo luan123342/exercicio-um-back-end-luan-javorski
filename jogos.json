@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "titulo": "The Witcher 3",
+    "genero": "RPG",
+    "ano": 2015,
+    "plataforma": "PC",
+    "nota": 9.0
+  },
+  {
+    "id": 2,
+    "titulo": "God of War",
+    "genero": "Ação",
+    "ano": 2018,
+    "plataforma": "PS4",
+    "nota": 9.5
+  },
+  {
+    "id": 3,
+    "titulo": "FIFA 23",
+    "genero": "Esporte",
+    "ano": 2022,
+    "plataforma": "PC",
+    "nota": 7.8
+  }
+]
